@@ -10,7 +10,7 @@ namespace WasteManagementSystem.Business.Auth;
     public interface ILoginService
     {
         Task<string?> Auth(LoginDto login);
-        string CreateJWT(User user);
+        string CreateJWT(User user, UserType userType);
         bool VerifyPassword(string? password, string base64Hash);
         string HashPassword(string? password);
 

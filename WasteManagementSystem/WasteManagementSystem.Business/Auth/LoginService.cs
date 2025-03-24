@@ -39,7 +39,8 @@ public class LoginService : ILoginService
         {
             return null;
         }
-        return this.CreateJWT(actual_user);
+        var actual_user_type = await _userTypeRepository.GetByIdAsync(actual_user.UserTypeId);
+        return this.CreateJWT(actual_user, actual_user_type);
     }
     public string HashPassword(string? password)
     {
@@ -78,7 +79,7 @@ public class LoginService : ILoginService
         }
         return true;
     }
-    public string CreateJWT(User user)
+    public string CreateJWT(User user,UserType userType)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -89,7 +90,7 @@ public class LoginService : ILoginService
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
-                    new Claim(ClaimTypes.Role,user.UserTypeId.ToString())
+                    new Claim(ClaimTypes.Role,userType.Name)
 
                 }
             ),

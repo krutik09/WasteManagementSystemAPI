@@ -53,6 +53,19 @@ public class BaseService<T, TDto> : IBaseService<T, TDto>
     {
         var _entity = _mapper.Map<T>(entity);
         var actual_entity = await _repository.GetEntity(_entity, _distinctPropertyName);
+        var actual_entity_properties = typeof(T).GetProperties();
+        foreach (var property in actual_entity_properties)
+        {
+            if(property.Name == _distinctPropertyName)
+            {
+                continue;
+            }
+            var entity_value = property.GetValue(_entity);
+            if (entity_value != null&&!entity_value.Equals(Activator.CreateInstance(property.PropertyType)))
+            {
+                property.SetValue(actual_entity, entity_value);
+            }
+        }
         await _repository.UpdateAsync(actual_entity);
         await _repository.SaveChangesAsync();
     }

@@ -15,10 +15,5 @@ public class User
     [ForeignKey("UserType")]    
     public int UserTypeId { get; set; }
     public string Password {  get; set; }
-
-    // Navigation properties
-    public virtual UserType UserType { get; set; }
-    public virtual ICollection<Order> Orders { get; set; }
-    public virtual ICollection<Order> OrdersForDriver { get; set; }
 }
 

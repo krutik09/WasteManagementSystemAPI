@@ -29,5 +29,11 @@ namespace WasteManagementSystem.API.Controllers
             await _orderService.AddOrder(orderRequestDto, loggedInUserId);
             return Ok();
         }
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateOrder([FromBody] OrderDto order)
+        {
+            await _orderService.UpdateAsync(order);
+            return Ok();
+        }
     }
 }

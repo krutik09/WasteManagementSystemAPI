@@ -58,6 +58,7 @@ public class OrderService : BaseService<Order, OrderDto>, IOrderService
                        OrderDate = o.OrderDate,
                        WasteTypeName = wt.Name,
                        WasteUnitName = wu.Name,
+                       WasteAmount = o.WasteAmount,
                        UserName = u.Name,
                        DriverName = d.Name,
                        StatusName = s.Name

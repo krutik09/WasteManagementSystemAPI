@@ -26,9 +26,15 @@ namespace WasteManagementSystem.API.Controllers
             return result;
         }
         [HttpDelete]
-        public async Task<IActionResult> DeleteUserType([FromBody] WasteTypeDto wasteType)
+        public async Task<IActionResult> DeleteWasteType([FromBody] WasteTypeDto wasteType)
         {
             await _wasteTypeService.DeleteAsync(wasteType);
+            return Ok();
+        }
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateWasteType([FromBody] WasteTypeDto wasteType)
+        {
+            await _wasteTypeService.UpdateAsync(wasteType);
             return Ok();
         }
     }

@@ -12,8 +12,9 @@ public class AutoMapper:Profile
         CreateMap<WasteType, WasteTypeDto>().ReverseMap();
         CreateMap<User,UserDto>().ReverseMap();
         CreateMap<WasteUnit, WasteUnitDto>().ReverseMap();
-        CreateMap<OrderDto, OrderDto>().ReverseMap();
+        CreateMap<Order, OrderDto>().ReverseMap();
         CreateMap<Order, OrderRequestDto>().ReverseMap();
+        CreateMap<OrderDto, OrderRequestDto>().ReverseMap();
         CreateMap<Status, StatusDto>().ReverseMap();
     }
 }

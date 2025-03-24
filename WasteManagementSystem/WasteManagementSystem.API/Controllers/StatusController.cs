@@ -32,5 +32,11 @@ namespace WasteManagementSystem.API.Controllers
             await _statusService.DeleteAsync(status);
             return Ok();
         }
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateStatus([FromBody] StatusDto status)
+        {
+            await _statusService.UpdateAsync(status);
+            return Ok();
+        }
     }
 }

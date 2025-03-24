@@ -32,5 +32,11 @@ namespace WasteManagementSystem.API.Controllers
             await _wasteUnitService.DeleteAsync(wasteType);
             return Ok();
         }
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateWasteUnit([FromBody] WasteUnitDto wasteUnit)
+        {
+            await _wasteUnitService.UpdateAsync(wasteUnit);
+            return Ok();
+        }
     }
 }

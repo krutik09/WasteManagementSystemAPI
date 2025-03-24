@@ -24,12 +24,5 @@ public class Order
 
     [ForeignKey("Driver")]
     public int? DriverId { get; set; }
-   
-    // Navigation properties
-    public virtual User User { get; set; }
-    public virtual User Driver { get; set; }
-    public virtual WasteType WasteType { get; set; }
-    public virtual WasteUnit WasteUnit { get; set; }
-    public virtual Status Status { get; set; }
 }
 

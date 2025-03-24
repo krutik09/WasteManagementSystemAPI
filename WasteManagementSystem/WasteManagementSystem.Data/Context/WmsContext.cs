@@ -14,16 +14,6 @@ public partial class WmsContext: DbContext
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<WasteUnit> WasteUnits { get; set; }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Order>()
-       .HasOne(o => o.Driver)
-       .WithMany(u => u.OrdersForDriver) // This ensures a distinct navigation collection
-       .HasForeignKey(o => o.DriverId)
-       .OnDelete(DeleteBehavior.Restrict);
-
-        base.OnModelCreating(modelBuilder);
-        base.OnModelCreating(modelBuilder);
-    }
+    
 }
 

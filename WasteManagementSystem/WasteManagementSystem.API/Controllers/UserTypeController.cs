@@ -32,6 +32,11 @@ namespace WasteManagementSystem.API.Controllers
             await _userTypeService.DeleteAsync(userType);
             return Ok();
         }
-
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateUserType([FromBody] UserTypeDto userType)
+        {
+            await _userTypeService.UpdateAsync(userType);
+            return Ok();
+        }
     }
 }
