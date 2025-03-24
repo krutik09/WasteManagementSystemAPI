@@ -4,7 +4,7 @@ namespace WasteManagementSystem.Data.Repositories;
 
 public interface IRepository<T>
 {
-    Task<T?> GetEntity(T entity);
+    Task<T?> GetEntity(T entity,string propertyName);
     Task<T> GetByIdAsync(int id);
     Task<List<T>> GetAllAsync();
     Task AddAsync(T entity);

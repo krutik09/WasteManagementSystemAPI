@@ -8,6 +8,7 @@ namespace WasteManagementSystem.Business.Services.BaseService;
 public class BaseService<T, TDto> : IBaseService<T, TDto>
 {
     private readonly IRepository<T> _repository;
+    public string _distinctPropertyName;
     private readonly IMapper _mapper;
     public BaseService(IRepository<T> repository, IMapper mapper)
     {
@@ -41,20 +42,18 @@ public class BaseService<T, TDto> : IBaseService<T, TDto>
 
     public async Task DeleteAsync(TDto entity)
     {
-        try
-        {
-            var _entity = _mapper.Map<T>(entity);
-            var actual_entity = await _repository.GetEntity(_entity);
-            await _repository.DeleteAsync(actual_entity);
-            await _repository.SaveChangesAsync();
-        }
-        catch (Exception ex) { }
+
+        var _entity = _mapper.Map<T>(entity);
+        var actual_entity = await _repository.GetEntity(_entity, _distinctPropertyName);
+        await _repository.DeleteAsync(actual_entity);
+        await _repository.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(TDto entity)
     {
         var _entity = _mapper.Map<T>(entity);
-        _repository.UpdateAsync(_entity);
+        var actual_entity = await _repository.GetEntity(_entity, _distinctPropertyName);
+        await _repository.UpdateAsync(actual_entity);
         await _repository.SaveChangesAsync();
     }
 }

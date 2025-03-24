@@ -12,7 +12,7 @@ public class UserTypeService:BaseService<UserType,UserTypeDto>, IUserTypeService
 {
     public UserTypeService(IRepository<UserType> repository,IMapper mapper):base(repository, mapper)
     {
-        
+        _distinctPropertyName = "Name";
     }
 }
 

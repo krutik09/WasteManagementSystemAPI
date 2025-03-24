@@ -11,7 +11,7 @@ public class WasteTypeService:BaseService<WasteType,WasteTypeDto>,IWasteTypeServ
 {
     public WasteTypeService(IRepository<WasteType> repository,IMapper mapper):base(repository,mapper)
     {
-        
+        _distinctPropertyName = "Name";
     }
 
 }

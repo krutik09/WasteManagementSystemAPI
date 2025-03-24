@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using WasteManagementSystem.Data.Builders;
 using WasteManagementSystem.Data.Context;
 
 namespace WasteManagementSystem.Data.Repositories;
@@ -17,47 +18,25 @@ public class Repository<T> : IRepository<T> where T : class
     }
     public async Task<T> GetByIdAsync(int id)
     {
-        var result =  await _dbset.FindAsync(id);
+        var result = await _dbset.FindAsync(id);
         return result;
     }
-    public async Task<T?> GetEntity(T entity)
+    public async Task<T?> GetEntity(T entity, string PropertyName)
     {
         try
         {
             // Gets the type of entity. Ex: UserType
             var entityType = typeof(T);
-
-            // Gets the list of properties from type. Ex: Id, Name
-            var properties = entityType.GetProperties();
-            foreach (var property in properties)
+            var property = entityType.GetProperty(PropertyName);
+            var value = property.GetValue(entity);
+            var actualEntity = await _dbset.FirstOrDefaultAsync(ExpressionBuilder<T>.Build(PropertyName, value));
+            if (actualEntity != null)
             {
-                // Create paramater x for expression. Ex: x 
-                var parameter = Expression.Parameter(entityType, "x");
-
-                // Attaching property with expression. Ex: x.Id (assuming current property is Id)
-                var propertyExpression = Expression.Property(parameter, property.Name);
-
-                // Getting value of property. Ex: Id = 1
-                var value = property.GetValue(entity);
-
-                // Hold value in expression. Ex: 1
-                var valueExpression = Expression.Constant(value);
-
-                // Creates equal expression using propertyExpression and value. Ex: x.Id == 1
-                var equalExpression = Expression.Equal(propertyExpression, valueExpression);
-
-                // Creates lambda function. Ex: x => x.Id == 1
-                var lambaExpression = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
-
-                // Try to find an entity matching this property
-                var actualEntity = await _dbset.FirstOrDefaultAsync(lambaExpression);
-                if (actualEntity != null)
-                {
-                    return actualEntity;
-                }
+                return actualEntity;
             }
+
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return null;
         }
@@ -65,7 +44,7 @@ public class Repository<T> : IRepository<T> where T : class
     }
     public async Task<List<T>> GetAllAsync()
     {
-       return await _dbset.AsQueryable().ToListAsync();
+        return await _dbset.AsQueryable().ToListAsync();
     }
 
     public async Task AddAsync(T entity)
@@ -75,7 +54,6 @@ public class Repository<T> : IRepository<T> where T : class
 
     public async Task DeleteAsync(T entity)
     {
-
         _dbset.Remove(entity);
     }
     public async Task UpdateAsync(T entity)
@@ -93,5 +71,5 @@ public class Repository<T> : IRepository<T> where T : class
         await _wmsContext.SaveChangesAsync();
     }
 
-  
+
 }
