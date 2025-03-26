@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.WasteUnitService;
 using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class WasteUnitController : ControllerBase
+    public class WasteUnitController : BaseController
     {
         private readonly IWasteUnitService _wasteUnitService;
         public WasteUnitController(IWasteUnitService wasteUnitService)
@@ -26,12 +28,14 @@ namespace WasteManagementSystem.API.Controllers
             var result =  await _wasteUnitService.GetWasteUnit();
             return result;
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddWasteUnit([FromBody] WasteUnitDto wasteType)
         {
             await _wasteUnitService.AddWasteUnit(wasteType);
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWasteUnit(int id)
         {
@@ -42,6 +46,7 @@ namespace WasteManagementSystem.API.Controllers
             }
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateWasteUnit([FromBody] WasteUnit wasteUnit)
         {

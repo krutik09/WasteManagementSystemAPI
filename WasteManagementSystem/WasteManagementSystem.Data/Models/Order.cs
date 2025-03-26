@@ -10,7 +10,10 @@ public class Order
     public Guid OrderId { get; set; } = new Guid(Guid.NewGuid().ToString());
     public string OrderName { get; set; }
     public string OrderDescription { get; set; }
-    public string OrderDate { get; set; } = DateTime.Now.ToShortDateString();
+    public string OrderDate { get; set; } = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    public string LastUpdatedDate { get; set; } = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    [ForeignKey("OrderUpdatedBy")]
+    public int LastUpdatedByUserId { get; set; }
     [ForeignKey("User")]
     public int UserId { get; set; }
 

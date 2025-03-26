@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.OrderService;
 using WasteManagementSystem.Business.Services.UserService;
 
 namespace WasteManagementSystem.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class OrderController : BaseController
     {
         private readonly IOrderService _orderService;
         private readonly IUserService _userService;
@@ -26,8 +27,7 @@ namespace WasteManagementSystem.API.Controllers
         [HttpGet]
         public async Task<List<OrderDto>> GetOrder()
         {
-            var loggedInUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var userTypeName = (await _userService.GetUserById(loggedInUserId))!.UserTypeName;
+            var userTypeName = (await _userService.GetUserById(LoggedInUserId))!.UserTypeName;
             var result = new List<OrderDto>();
             if (userTypeName == "Admin")
             {
@@ -35,19 +35,18 @@ namespace WasteManagementSystem.API.Controllers
             }
             else if(userTypeName == "Customer")
             {
-                result = await _orderService.GetOrderByUserId(loggedInUserId);
+                result = await _orderService.GetOrderByUserId(LoggedInUserId);
             }
             else if (userTypeName == "Driver")
             {
-                result = await _orderService.GetOrderByDriverId(loggedInUserId);
+                result = await _orderService.GetOrderByDriverId(LoggedInUserId);
             }
             return result;
         }
         [HttpPost]
         public async Task<IActionResult> Addorder(OrderRequestDto orderRequestDto)
         {
-            var loggedInUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            await _orderService.AddOrder(orderRequestDto, loggedInUserId);
+            await _orderService.AddOrder(orderRequestDto, LoggedInUserId);
             return Ok();
         }
         [HttpDelete("{id}")]
@@ -63,7 +62,7 @@ namespace WasteManagementSystem.API.Controllers
         [HttpPost("Update/{id}")]
         public async Task<IActionResult> UpdateOrder(int id,[FromBody] OrderRequestDto order)
         {
-            var result = await _orderService.UpdateOrder(id, order);
+            var result = await _orderService.UpdateOrder(id, order,LoggedInUserId);
             if (!result)
             {
                 return BadRequest();
@@ -73,17 +72,18 @@ namespace WasteManagementSystem.API.Controllers
         [HttpPost("UpdateStatus/{orderId}/{statusId}")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, int statusId)
         {
-            var result = await _orderService.UpdateStatus(orderId,statusId);
+            var result = await _orderService.UpdateStatus(orderId,statusId, LoggedInUserId);
             if (!result)
             {
                 return BadRequest();
             }
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("UpdateDriver/{orderId}/{driverId}")]
         public async Task<IActionResult> UpdateDriver(int orderId, int driverId)
         {
-            var result = await _orderService.UpdateDriver(orderId, driverId);
+            var result = await _orderService.UpdateDriver(orderId, driverId, LoggedInUserId);
             if (!result)
             {
                 return BadRequest();

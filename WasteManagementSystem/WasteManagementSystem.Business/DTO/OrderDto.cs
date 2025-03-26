@@ -17,5 +17,8 @@ public class OrderDto
     public string? DriverName { get; set; }
     public int StatusId { get; set; }
     public string StatusName { get; set; }
+    public int LastUpdatedByUserId { get; set; }
+    public string LastUpdatedByUserName { get; set; }
+    public string LastUpdatedDate { get; set; }
 }
 

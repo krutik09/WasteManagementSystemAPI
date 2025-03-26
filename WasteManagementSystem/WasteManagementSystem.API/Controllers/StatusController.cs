@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.StatusService;
@@ -6,9 +7,10 @@ using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class StatusController : BaseController
     {
         private readonly IStatusService _statusService;
         public StatusController(IStatusService statusService)
@@ -27,12 +29,14 @@ namespace WasteManagementSystem.API.Controllers
             var result = await _statusService.GetStatus();
             return result;
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddStatus([FromBody] StatusDto status)
         {
             await _statusService.AddStatus(status);
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStatus(int id)
         {
@@ -43,6 +47,7 @@ namespace WasteManagementSystem.API.Controllers
             }
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateStatus([FromBody] Status status)
         {

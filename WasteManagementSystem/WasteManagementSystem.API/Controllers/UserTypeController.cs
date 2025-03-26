@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.UserService;
 using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserTypeController : ControllerBase
+    public class UserTypeController : BaseController
     {
         private readonly IUserTypeService _userTypeService;
         public UserTypeController(IUserTypeService userTypeService)
@@ -27,12 +29,14 @@ namespace WasteManagementSystem.API.Controllers
             var result = await _userTypeService.GetUserType();
             return result;
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddUserType([FromBody] UserTypeDto userType)
         {
             await _userTypeService.AddWasteUnit(userType);
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserType(int id)
         {
@@ -43,6 +47,7 @@ namespace WasteManagementSystem.API.Controllers
             }
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateUserType([FromBody] UserType userType)
         {

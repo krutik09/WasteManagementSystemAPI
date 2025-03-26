@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.Auth;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.UserService;
 
 namespace WasteManagementSystem.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly ILoginService _loginService;
@@ -28,6 +30,7 @@ namespace WasteManagementSystem.API.Controllers
             var result = await _userService.GetUser();
             return result;
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] UserRequestDto userDto)
         {
@@ -38,6 +41,7 @@ namespace WasteManagementSystem.API.Controllers
             await _userService.AddUser(userDto);
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -48,6 +52,7 @@ namespace WasteManagementSystem.API.Controllers
             }
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("Update/{id}")]
         public async Task<IActionResult> UpdateUser(int id,[FromBody] UserRequestDto user)
         {

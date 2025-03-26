@@ -12,9 +12,9 @@ public interface IOrderService
     Task<List<OrderDto>> GetOrderByDriverId(int driverId);
     Task AddOrder(OrderRequestDto orderRequest, int LoggedInUserId);
     Task<bool> DeleteOrder(int id);
-    Task<bool> UpdateOrder(int id, OrderRequestDto orderReq);
-    Task<bool> UpdateStatus(int orderId,int statusId);
-    Task<bool> UpdateDriver(int orderId, int driverId);
+    Task<bool> UpdateOrder(int id, OrderRequestDto orderReq, int loggedInUserId);
+    Task<bool> UpdateStatus(int orderId,int statusId,int loggedInUserId);
+    Task<bool> UpdateDriver(int orderId, int driverId, int loggedInUserId);
 }
 public class OrderService: IOrderService
 {
@@ -56,6 +56,8 @@ public class OrderService: IOrderService
                              join
                                 u in userList on o.UserId equals u.Id
                              join
+                               lu in userList on o.LastUpdatedByUserId equals lu.Id
+                             join
                                 s in statusList on o.StatusId equals s.Id
                              join
                                 d in userList on o.DriverId equals d.Id
@@ -76,7 +78,10 @@ public class OrderService: IOrderService
                                  DriverId = o.DriverId,
                                  DriverName = d.Name,
                                  StatusId = o.StatusId,
-                                 StatusName = s.Name
+                                 StatusName = s.Name,
+                                 LastUpdatedDate = o.LastUpdatedDate,
+                                 LastUpdatedByUserId = o.LastUpdatedByUserId,
+                                 LastUpdatedByUserName = lu.Name,
                              }).First();
                 return result;
             }
@@ -89,6 +94,8 @@ public class OrderService: IOrderService
                                  wu in wasteUnitList on o.WasteUnitId equals wu.Id
                               join
                                  u in userList on o.UserId equals u.Id
+                              join
+                                lu in userList on o.LastUpdatedByUserId equals lu.Id
                               join
                                  s in statusList on o.StatusId equals s.Id
                               select new OrderDto
@@ -106,7 +113,10 @@ public class OrderService: IOrderService
                                   UserId = o.UserId,
                                   UserName = u.Name,
                                   StatusId = o.StatusId,
-                                  StatusName = s.Name
+                                  StatusName = s.Name,
+                                  LastUpdatedDate = o.LastUpdatedDate,
+                                  LastUpdatedByUserId = o.LastUpdatedByUserId,
+                                  LastUpdatedByUserName = lu.Name,
                               }).First();
                 return result;
             }
@@ -127,7 +137,8 @@ public class OrderService: IOrderService
                          wu in wasteUnitList on o.WasteUnitId equals wu.Id
                    join
                          u in userList on o.UserId equals u.Id
-
+                   join
+                         lu in userList on o.LastUpdatedByUserId equals lu.Id
                    join
                          s in statusList on o.StatusId equals s.Id
                    join
@@ -150,7 +161,10 @@ public class OrderService: IOrderService
                        DriverId = o.DriverId,
                        DriverName = d.Name,
                        StatusId = o.StatusId,
-                       StatusName = s.Name
+                       StatusName = s.Name,
+                       LastUpdatedDate = o.LastUpdatedDate,
+                       LastUpdatedByUserId = o.LastUpdatedByUserId,
+                       LastUpdatedByUserName = lu.Name,
                    }).ToList();
         var orderListWithoutDriverAssgined = (from o in orderList
                                            join
@@ -159,7 +173,8 @@ public class OrderService: IOrderService
                                                  wu in wasteUnitList on o.WasteUnitId equals wu.Id
                                            join
                                                  u in userList on o.UserId equals u.Id
-
+                                           join
+                                                 lu in userList on o.LastUpdatedByUserId equals lu.Id
                                            join
                                                  s in statusList on o.StatusId equals s.Id
                                            select new OrderDto
@@ -177,7 +192,10 @@ public class OrderService: IOrderService
                                                UserId = o.UserId,
                                                UserName = u.Name,
                                                StatusId= o.StatusId,
-                                               StatusName = s.Name
+                                               StatusName = s.Name,
+                                               LastUpdatedDate = o.LastUpdatedDate,
+                                               LastUpdatedByUserId = o.LastUpdatedByUserId,
+                                               LastUpdatedByUserName = lu.Name,
                                            }).ToList();
         return orderListWithDriverAssgined.Concat(orderListWithoutDriverAssgined).ToList();
     }
@@ -195,7 +213,8 @@ public class OrderService: IOrderService
                                                  wu in wasteUnitList on o.WasteUnitId equals wu.Id
                                            join
                                                  u in userList on o.UserId equals u.Id
-
+                                           join
+                                                lu in userList on o.LastUpdatedByUserId equals lu.Id
                                            join
                                                  s in statusList on o.StatusId equals s.Id
                                            join
@@ -218,7 +237,10 @@ public class OrderService: IOrderService
                                                DriverId = o.DriverId,
                                                DriverName = d.Name,
                                                StatusId = o.StatusId,
-                                               StatusName = s.Name
+                                               StatusName = s.Name,
+                                               LastUpdatedDate = o.LastUpdatedDate,
+                                               LastUpdatedByUserId = o.LastUpdatedByUserId,
+                                               LastUpdatedByUserName = lu.Name,
                                            }).ToList();
         var orderListWithoutDriverAssgined = (from o in orderList
                                               join
@@ -227,7 +249,8 @@ public class OrderService: IOrderService
                                                     wu in wasteUnitList on o.WasteUnitId equals wu.Id
                                               join
                                                     u in userList on o.UserId equals u.Id
-
+                                              join
+                                                    lu in userList on o.LastUpdatedByUserId equals lu.Id
                                               join
                                                     s in statusList on o.StatusId equals s.Id
                                               where o.DriverId == null && u.Id == userId
@@ -246,7 +269,10 @@ public class OrderService: IOrderService
                                                   UserId = o.UserId,
                                                   UserName = u.Name,
                                                   StatusId = o.StatusId,
-                                                  StatusName = s.Name
+                                                  StatusName = s.Name,
+                                                  LastUpdatedDate = o.LastUpdatedDate,
+                                                  LastUpdatedByUserId = o.LastUpdatedByUserId,
+                                                  LastUpdatedByUserName = lu.Name,
                                               }).ToList();
         return orderListWithDriverAssgined.Concat(orderListWithoutDriverAssgined).ToList();
     }
@@ -264,7 +290,8 @@ public class OrderService: IOrderService
                                                  wu in wasteUnitList on o.WasteUnitId equals wu.Id
                                            join
                                                  u in userList on o.UserId equals u.Id
-
+                                           join
+                                                 lu in userList on o.LastUpdatedByUserId equals lu.Id
                                            join
                                                  s in statusList on o.StatusId equals s.Id
                                            join
@@ -287,7 +314,10 @@ public class OrderService: IOrderService
                                                DriverId = o.DriverId,
                                                DriverName = d.Name,
                                                StatusId = o.StatusId,
-                                               StatusName = s.Name
+                                               StatusName = s.Name,
+                                               LastUpdatedDate = o.LastUpdatedDate,
+                                               LastUpdatedByUserId = o.LastUpdatedByUserId,
+                                               LastUpdatedByUserName = lu.Name,
                                            }).ToList();
         return result;
     }
@@ -309,7 +339,7 @@ public class OrderService: IOrderService
         await _orderRepository.SaveChangesAsync();
         return true;
     }
-    public async Task<bool> UpdateOrder(int id,OrderRequestDto orderReq)
+    public async Task<bool> UpdateOrder(int id,OrderRequestDto orderReq, int loggedInUserId)
     {
         var order = await _orderRepository.GetByIdAsync(id);
         if (order == null)
@@ -321,11 +351,13 @@ public class OrderService: IOrderService
         order.WasteTypeId = orderReq.WasteTypeId;
         order.WasteAmount = orderReq.WasteAmount;
         order.WasteUnitId = orderReq.WasteUnitId;
+        order.LastUpdatedByUserId = loggedInUserId;
+        order.LastUpdatedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         await _orderRepository.UpdateAsync(order);
         await _orderRepository.SaveChangesAsync();
         return true;
     }
-    public async Task<bool> UpdateStatus(int orderId, int statusId)
+    public async Task<bool> UpdateStatus(int orderId, int statusId, int loggedInUserId)
     {
         var order = await _orderRepository.GetByIdAsync(orderId);
         if (order == null||(order.StatusId == 2 && statusId==4))
@@ -333,11 +365,13 @@ public class OrderService: IOrderService
             return false;
         }
         order.StatusId = statusId;
+        order.LastUpdatedByUserId = loggedInUserId;
+        order.LastUpdatedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         await _orderRepository.UpdateAsync(order);
         await _orderRepository.SaveChangesAsync();
         return true;
     }
-    public async Task<bool> UpdateDriver(int orderId, int driverId)
+    public async Task<bool> UpdateDriver(int orderId, int driverId, int loggedInUserId)
     {
         var order = await _orderRepository.GetByIdAsync(orderId);
         if (order == null)
@@ -346,6 +380,8 @@ public class OrderService: IOrderService
         }
         order.DriverId = driverId;
         order.StatusId = 2;
+        order.LastUpdatedByUserId = loggedInUserId;
+        order.LastUpdatedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         await _orderRepository.UpdateAsync(order);
         await _orderRepository.SaveChangesAsync();
         return true;
