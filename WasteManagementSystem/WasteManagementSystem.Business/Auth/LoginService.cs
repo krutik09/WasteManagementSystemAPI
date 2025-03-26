@@ -101,8 +101,8 @@ public class LoginService : ILoginService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-    public async Task<bool> isEmailExist(string email) {
-        return true;
+    public async Task<bool> IsEmailExist(string email) {
+        return (await _userRepository.GetAllAsync()).Any(x=>x.Email==email);
     }
 }
 

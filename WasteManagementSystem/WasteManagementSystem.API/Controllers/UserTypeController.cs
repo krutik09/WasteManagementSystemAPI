@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.UserService;
+using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
@@ -14,28 +15,42 @@ namespace WasteManagementSystem.API.Controllers
 
             _userTypeService = userTypeService;
         }
+        [HttpGet("{id}")]
+        public async Task<UserType?> GetUserTypeById(int id)
+        {
+            var result = await _userTypeService.GetUserTypeById(id);
+            return result;
+        }
+        [HttpGet]
+        public async Task<List<UserType>> GetUserType()
+        {
+            var result = await _userTypeService.GetUserType();
+            return result;
+        }
         [HttpPost]
         public async Task<IActionResult> AddUserType([FromBody] UserTypeDto userType)
         {
-            await _userTypeService.AddAsync(userType);
+            await _userTypeService.AddWasteUnit(userType);
             return Ok();
         }
-        [HttpGet]
-        public async Task<List<UserTypeDto>> GetUserType()
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUserType(int id)
         {
-            var result = await _userTypeService.GetAllAsync();
-            return result;
-        }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteUserType([FromBody] UserTypeDto userType)
-        {
-            await _userTypeService.DeleteAsync(userType);
+            var result = await _userTypeService.DeleteWasteUnit(id);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateUserType([FromBody] UserTypeDto userType)
+        [HttpPost("Update")]
+        public async Task<IActionResult> UpdateUserType([FromBody] UserType userType)
         {
-            await _userTypeService.UpdateAsync(userType);
+            var result = await _userTypeService.UpdateWasteUnit(userType);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
     }

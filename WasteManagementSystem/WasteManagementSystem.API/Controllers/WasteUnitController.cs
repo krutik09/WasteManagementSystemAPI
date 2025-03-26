@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.WasteUnitService;
+using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
@@ -14,28 +14,42 @@ namespace WasteManagementSystem.API.Controllers
         {
             _wasteUnitService = wasteUnitService;
         }
-        [HttpGet]
-        public async Task<List<WasteUnitDto>> GetWasteUnit()
+        [HttpGet("{id}")]
+        public async Task<WasteUnit?> GetWasteUnitById(int id)
         {
-            var result =  await _wasteUnitService.GetAllAsync();
+            var result = await _wasteUnitService.GetWasteUnitById(id);
+            return result;
+        }
+        [HttpGet]
+        public async Task<List<WasteUnit>> GetWasteUnit()
+        {
+            var result =  await _wasteUnitService.GetWasteUnit();
             return result;
         }
         [HttpPost]
         public async Task<IActionResult> AddWasteUnit([FromBody] WasteUnitDto wasteType)
         {
-            await _wasteUnitService.AddAsync(wasteType);
+            await _wasteUnitService.AddWasteUnit(wasteType);
             return Ok();
         }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteWasteUnit([FromBody] WasteUnitDto wasteType)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWasteUnit(int id)
         {
-            await _wasteUnitService.DeleteAsync(wasteType);
+            var result = await _wasteUnitService.DeleteWasteUnit(id);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateWasteUnit([FromBody] WasteUnitDto wasteUnit)
+        [HttpPost("Update")]
+        public async Task<IActionResult> UpdateWasteUnit([FromBody] WasteUnit wasteUnit)
         {
-            await _wasteUnitService.UpdateAsync(wasteUnit);
+            var result =  await _wasteUnitService.UpdateWasteUnit(wasteUnit);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
     }

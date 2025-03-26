@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.StatusService;
+using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
@@ -14,28 +15,42 @@ namespace WasteManagementSystem.API.Controllers
         {
             _statusService = statusService;
         }
-        [HttpGet]
-        public async Task<List<StatusDto>> GetStatus()
+        [HttpGet("{id}")]
+        public async Task<Status?> GetStatus(int id)
         {
-            var result = await _statusService.GetAllAsync();
+            var result = await _statusService.GetStatusById(id);
+            return result;
+        }
+        [HttpGet]
+        public async Task<List<Status>> GetStatus()
+        {
+            var result = await _statusService.GetStatus();
             return result;
         }
         [HttpPost]
         public async Task<IActionResult> AddStatus([FromBody] StatusDto status)
         {
-            await _statusService.AddAsync(status);
+            await _statusService.AddStatus(status);
             return Ok();
         }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteStatus([FromBody] StatusDto status)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStatus(int id)
         {
-            await _statusService.DeleteAsync(status);
+            var result = await _statusService.DeleteStatus(id);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateStatus([FromBody] StatusDto status)
+        [HttpPost("Update")]
+        public async Task<IActionResult> UpdateStatus([FromBody] Status status)
         {
-            await _statusService.UpdateAsync(status);
+            var result  = await _statusService.UpdateStatus(status);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
     }

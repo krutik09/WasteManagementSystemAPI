@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WasteManagementSystem.Business.DTO;
 using WasteManagementSystem.Business.Services.WasteTypeService;
+using WasteManagementSystem.Data.Models;
 
 namespace WasteManagementSystem.API.Controllers
 {
@@ -13,28 +14,43 @@ namespace WasteManagementSystem.API.Controllers
         {
             _wasteTypeService = wasteTypeService;
         }
+        [HttpGet("{id}")]
+        public async Task<WasteType?> GetWasteTypeById(int id)
+        {
+            var result = await _wasteTypeService.GetWasteTypeById(id);
+            return result;
+        }
+        [HttpGet]
+        public async Task<List<WasteType>> GetWasteType()
+        {
+            var result = await _wasteTypeService.GetWasteType();
+            return result;
+        }
         [HttpPost]
         public async Task<IActionResult> AddWasteType([FromBody] WasteTypeDto wasteType)
         {
-            await _wasteTypeService.AddAsync(wasteType);
+            await _wasteTypeService.AddWasteUnit(wasteType);
             return Ok();
         }
-        [HttpGet]
-        public async Task<List<WasteTypeDto>> GetWasteType()
+       
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWasteType(int id)
         {
-            var result = await _wasteTypeService.GetAllAsync();
-            return result;
-        }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteWasteType([FromBody] WasteTypeDto wasteType)
-        {
-            await _wasteTypeService.DeleteAsync(wasteType);
+            var result = await _wasteTypeService.DeleteWasteUnit(id);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateWasteType([FromBody] WasteTypeDto wasteType)
+        [HttpPost("Update")]
+        public async Task<IActionResult> UpdateWasteType([FromBody] WasteType wasteType)
         {
-            await _wasteTypeService.UpdateAsync(wasteType);
+            var result = await _wasteTypeService.UpdateWasteUnit(wasteType);
+            if (!result)
+            {
+                return BadRequest();
+            }
             return Ok();
         }
     }

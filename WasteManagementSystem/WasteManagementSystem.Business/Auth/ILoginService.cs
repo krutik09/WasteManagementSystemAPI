@@ -13,6 +13,6 @@ namespace WasteManagementSystem.Business.Auth;
         string CreateJWT(User user, UserType userType);
         bool VerifyPassword(string? password, string base64Hash);
         string HashPassword(string? password);
-
+        Task<bool> IsEmailExist(string email);
     }
 
