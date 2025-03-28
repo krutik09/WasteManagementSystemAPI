@@ -99,10 +99,22 @@ app.UseExceptionHandler(options =>
         }
     });
 });
+app.Use(async (context, next) =>
+{
+    Console.WriteLine("Incoming Request Headers:");
+    foreach (var header in context.Request.Headers)
+    {
+        Console.WriteLine($"{header.Key}: {header.Value}");
+    }
+
+    await next();
+});
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

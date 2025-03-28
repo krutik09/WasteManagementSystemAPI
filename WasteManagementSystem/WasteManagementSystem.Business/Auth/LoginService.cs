@@ -11,7 +11,7 @@ using WasteManagementSystem.Data.Repositories;
 namespace WasteManagementSystem.Business.Auth;
 public class LoginService : ILoginService
 {
-    public readonly byte[] secretKey = Encoding.ASCII.GetBytes("....very...very..secret.key..unknown..");
+    public readonly byte[] secretKey = Encoding.UTF8.GetBytes("....very...very..secret.key..unknown..");
     private static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
     private static readonly int SaltSize = 16;
     private static readonly int HashSize = 20;

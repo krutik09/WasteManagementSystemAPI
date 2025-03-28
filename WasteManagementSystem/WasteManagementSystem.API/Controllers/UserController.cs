@@ -6,7 +6,6 @@ using WasteManagementSystem.Business.Services.UserService;
 
 namespace WasteManagementSystem.API.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : BaseController
@@ -52,7 +51,7 @@ namespace WasteManagementSystem.API.Controllers
             }
             return Ok();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPost("Update/{id}")]
         public async Task<IActionResult> UpdateUser(int id,[FromBody] UserRequestDto user)
         {
